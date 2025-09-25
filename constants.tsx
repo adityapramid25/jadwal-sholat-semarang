@@ -23,9 +23,6 @@ const MaghribIcon = () => (
 const IsyaIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-300"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path><path d="M19 3v4"></path><path d="M21 5h-4"></path></svg>
 );
-export const LogoIcon = () => 
-  <img src="logosmk.png" alt="LogoSkanilan" style="width: 20px; height: auto;"></img>
-    );
 
 // --- Prayer Data ---
 
@@ -108,6 +105,66 @@ export const PRAYER_TIMES_DATA: PrayerInfo[] = [
     displayName: 'Ashar',
     icon: <AsharIcon />,
     description: 'Sholat fardhu 4 rakaat yang dilaksanakan setelah waktu Dhuhr berakhir hingga matahari terbenam.',
+    details: {
+      significance: "Sholat Ashar disebut sebagai 'sholat wustha' (sholat pertengahan) dalam beberapa tafsir, yang memiliki penekanan khusus untuk dijaga. Meninggalkannya dapat menghapus amalan.",
+      hadith: {
+        text: 'Barangsiapa yang meninggalkan sholat Ashar, maka terhapuslah amalannya.',
+        source: 'HR. Bukhari no. 553'
+      }
+    }
+  },
+  {
+    key: 'Maghrib',
+    displayName: 'Maghrib',
+    icon: <MaghribIcon />,
+    description: 'Sholat fardhu 3 rakaat yang dilaksanakan sesaat setelah matahari terbenam hingga hilangnya mega merah di ufuk barat.',
+    details: {
+      significance: 'Sholat Maghrib adalah penanda berakhirnya siang dan dimulainya malam. Waktunya yang singkat mengajarkan untuk bersegera dalam ketaatan.',
+      hadith: {
+        text: 'Umatku akan senantiasa berada dalam kebaikan selama mereka tidak mengakhirkan sholat Maghrib hingga bintang-bintang bermunculan.',
+        source: 'HR. Abu Daud no. 418'
+      }
+    }
+  },
+  {
+    key: 'Isha',
+    displayName: 'Isya',
+    icon: <IsyaIcon />,
+    description: 'Sholat fardhu 4 rakaat yang dilaksanakan setelah waktu Maghrib berakhir hingga terbit fajar shadiq.',
+    details: {
+      significance: 'Sholat Isya adalah penutup sholat fardhu di hari itu. Mengerjakannya secara berjamaah dinilai seperti sholat separuh malam.',
+      hadith: {
+        text: 'Barangsiapa yang melaksanakan sholat Isya secara berjamaah, maka ia seperti sholat separuh malam. Dan barangsiapa sholat Subuh berjamaah, maka ia seperti sholat semalam suntuk.',
+        source: 'HR. Muslim no. 656'
+      }
+    }
+  },
+];
+
+
+// --- Date Mappings ---
+
+export const HIJRI_MONTH_MAP: { [key: string]: string } = {
+  "Muharram": "Muharram",
+  "Safar": "Safar",
+  "Rabi al-awwal": "Rabi'ul Awal",
+  "Rabi al-Awwal": "Rabi'ul Awal",
+  "Rabi al-thani": "Rabi'ul Akhir",
+  "Rabi al-Thani": "Rabi'ul Akhir",
+  "Jumada al-ula": "Jumadil Awal",
+  "Jumada al-Ula": "Jumadil Awal",
+  "Jumada al-akhirah": "Jumadil Akhir",
+  "Jumada al-Akhirah": "Jumadil Akhir",
+  "Rajab": "Rajab",
+  "Shaban": "Sya'ban",
+  "Ramadan": "Ramadhan",
+  "Shawwal": "Syawal",
+  "Dhu al-Qidah": "Dzulqa'dah",
+  "Dhu al-Hijjah": "Dzulhijjah",
+};
+
+export const GREGORIAN_DAY_MAP: string[] = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+export const GREGORIAN_MONTH_MAP: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
     details: {
       significance: "Sholat Ashar disebut sebagai 'sholat wustha' (sholat pertengahan) dalam beberapa tafsir, yang memiliki penekanan khusus untuk dijaga. Meninggalkannya dapat menghapus amalan.",
       hadith: {
