@@ -167,7 +167,8 @@ const App: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex items-center justify-center gap-2 mt-4 opacity-60">
-                         <p className="text-xs">SMKN 9 SEMARANG</p>
+                         </logoIcon>
+                        <p className="text-xs">SMKN 9 SEMARANG</p>
                     </div>
                 </footer>
             </main>
