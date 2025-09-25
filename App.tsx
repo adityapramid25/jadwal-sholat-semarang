@@ -153,7 +153,6 @@ const App: React.FC = () => {
                 <header className="text-center mb-8">
                     <h1 className="text-4xl sm:text-5xl font-bold tracking-wider text-green-300">Jadwal Sholat</h1>
                     <p className="text-md sm:text-lg text-gray-300 mt-2">Semarang, Indonesia — {gregorianDate}</p>
-                    <p className="text-md sm:text-lg text-green-400 font-semibold mt-1">{hijriDate}</p>
                     <RealTimeClock />
                 </header>
 
@@ -164,12 +163,12 @@ const App: React.FC = () => {
                 <footer className="mt-12 text-center text-gray-400">
                     <div className="w-full overflow-hidden bg-black/30 rounded-full">
                         <div className="whitespace-nowrap animate-marquee">
-                           <p className="py-2 text-sm">"Sholat berjamaah lebih utama daripada sholat sendirian sebanyak 27 derajat. HR. Bukhari no. 645, Muslim no. 650"</p>
+                           <p className="py-2 text-sm">"Sholat berjamaah lebih utama daripada sholat sendirian sebanyak 27 derajat. (HR. Bukhari no. 645, Muslim no. 650)"</p>
                         </div>
                     </div>
                     <div className="flex items-center justify-center gap-2 mt-4 opacity-60">
                          <LogoIcon />
-                         <p className="text-xs">Prayer Times Project</p>
+                         <p className="text-xs">SMKN 9 SEMARANG</p>
                     </div>
                 </footer>
             </main>
