@@ -1,7 +1,8 @@
 import React from 'react';
 
 interface PrayerTimeRowProps {
-  icon: JSX.Element;
+  // FIX: Use `React.ReactElement` instead of `JSX.Element` to avoid "Cannot find namespace 'JSX'" error.
+  icon: React.ReactElement;
   name: string;
   time: string;
   isNext?: boolean;
