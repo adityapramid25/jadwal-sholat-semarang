@@ -168,11 +168,7 @@ const App: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex items-center justify-center gap-2 mt-4 opacity-60">
-                         <img 
-                            src="logosmk.png"
-                            alt="Great Mosque of Central Java"
-                            className="w-6 h-6 rounded-full object-cover"
-                         />
+                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Masjid_Agung_Jawa_Tengah_-_Semarang.jpg/320px-Masjid_Agung_Jawa_Tengah_-_Semarang.jpg" alt="Masjid Agung Jawa Tengah" className="w-6 h-6 rounded-full object-cover" />
                          <p className="text-xs">Prayer Times Project</p>
                     </div>
                 </footer>
