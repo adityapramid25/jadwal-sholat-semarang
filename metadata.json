@@ -1,0 +1,5 @@
+{
+  "name": "Jadwal Sholat Semarang",
+  "description": "A web application that displays daily prayer times for Semarang, Central Java, Indonesia, with a sleek, dark-themed interface optimized for both mobile and desktop views.",
+  "requestFramePermissions": []
+}
