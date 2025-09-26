@@ -24,7 +24,7 @@ const IsyaIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-300"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path><path d="M19 3v4"></path><path d="M21 5h-4"></path></svg>
 );
 export const LogoIcon = () => (
-  <img src="https://ik.imagekit.io/osrz32z55/logosmk.png?updatedAt=1758835702037" width="40px" height="auto"></img>
+  <img src="https://ik.imagekit.io/osrz32z55/logosmk.png?updatedAt=1758835702037" width="20px" height="auto"></img>
     );
 
 // --- Prayer Data ---
