@@ -1,74 +1,51 @@
+import type { FC } from 'react';
 
 export interface Timings {
+  Imsak: string;
   Fajr: string;
   Sunrise: string;
   Dhuhr: string;
   Asr: string;
   Maghrib: string;
   Isha: string;
-  Imsak: string;
-  Midnight: string;
-  Firstthird: string;
-  Lastthird: string;
-}
-
-export interface HijriMonth {
-  number: number;
-  en: string;
-  ar: string;
 }
 
 export interface HijriDate {
   date: string;
-  format: string;
   day: string;
   weekday: {
-    en: string;
-    ar: string;
+      en: string;
+      ar: string;
   };
-  month: HijriMonth;
+  month: {
+      number: number;
+      en: string;
+      ar: string;
+  };
   year: string;
-}
-
-export interface GregorianDate {
-    date: string;
-    format: string;
-    day: string;
-    weekday: {
-        en: string;
-    };
-    month: {
-        number: number;
-        en: string;
-    };
-    year: string;
-}
-
-export interface Meta {
-    latitude: number;
-    longitude: number;
-    timezone: string;
-    method: {
-        id: number;
-        name: string;
-    };
-    latitudeAdjustmentMethod: string;
-    midnightMode: string;
-    school: string;
-    offset: Record<string, number>;
-}
-
-export interface AladhanResponse {
-  code: number;
-  status: string;
-  data: {
-    timings: Timings;
-    date: {
-      readable: string;
-      timestamp: string;
-      gregorian: GregorianDate;
-      hijri: HijriDate;
-    };
-    meta: Meta;
+  designation: {
+      abbreviated: string;
+      expanded: string;
   };
+}
+
+export interface PrayerData {
+  timings: Timings;
+  date: {
+    readable: string;
+    hijri: HijriDate;
+  }
+}
+
+export interface Prayer {
+    name: string;
+    time: string;
+    icon: FC<{ className?: string }>;
+    description?: string;
+}
+
+// FIX: Add and export the Haiku interface to resolve missing type error.
+export interface Haiku {
+  title: string;
+  haiku: [string, string, string];
 }
