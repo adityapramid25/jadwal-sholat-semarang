@@ -23,6 +23,9 @@ const MaghribIcon = () => (
 const IsyaIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-300"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path><path d="M19 3v4"></path><path d="M21 5h-4"></path></svg>
 );
+export const LogoIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.2 16.2c.3-.3.6-.7.8-1.1s.3-.8.3-1.2c0-.4-.1-.8-.3-1.2s-.4-.8-.8-1.1c-.3-.3-.7-.6-1.1-.8s-.8-.3-1.2-.3c-.4 0-.8.1-1.2.3s-.8.4-1.1.8c-.3.3-.6.7-.8 1.1s-.3.8-.3 1.2c0 .4.1.8.3 1.2s.4.8.8 1.1c.3.3.7.6 1.1.8s.8.3 1.2.3c.4 0 .8-.1 1.2-.3s.8-.4 1.1-.8z"></path><path d="M10 22v-2"></path><path d="M7 19v-2"></path><path d="m11.3 5.7-.9-1.4"></path><path d="m5.2 6.8-.9-1.4"></path><path d="m8.4 12.9-.9-1.4"></path><path d="M3 10h4"></path><path d="M3 13h4"></path><path d="M5 22V10"></path></svg>
+);
 
 // --- Prayer Data ---
 
@@ -42,7 +45,7 @@ interface PrayerDetails {
 interface PrayerInfo {
   key: ApiPrayerName;
   displayName: PrayerName;
-  // FIX: Use `React.ReactElement` instead of `JSX.Element` to avoid "Cannot find namespace 'JSX'" error.
+  // FIX: Changed JSX.Element to React.ReactElement to resolve namespace error.
   icon: React.ReactElement;
   description: string;
   details: PrayerDetails;
@@ -144,25 +147,6 @@ export const PRAYER_TIMES_DATA: PrayerInfo[] = [
 
 
 // --- Date Mappings ---
-
-export const HIJRI_MONTH_MAP: { [key: string]: string } = {
-  "Muharram": "Muharram",
-  "Safar": "Safar",
-  "Rabi al-awwal": "Rabi'ul Awal",
-  "Rabi al-Awwal": "Rabi'ul Awal",
-  "Rabi al-thani": "Rabi'ul Akhir",
-  "Rabi al-Thani": "Rabi'ul Akhir",
-  "Jumada al-ula": "Jumadil Awal",
-  "Jumada al-Ula": "Jumadil Awal",
-  "Jumada al-akhirah": "Jumadil Akhir",
-  "Jumada al-Akhirah": "Jumadil Akhir",
-  "Rajab": "Rajab",
-  "Shaban": "Sya'ban",
-  "Ramadan": "Ramadhan",
-  "Shawwal": "Syawal",
-  "Dhu al-Qidah": "Dzulqa'dah",
-  "Dhu al-Hijjah": "Dzulhijjah",
-};
 
 export const GREGORIAN_DAY_MAP: string[] = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 export const GREGORIAN_MONTH_MAP: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];

@@ -1,277 +1,250 @@
-import React, { useState, useEffect } from 'react';
-import { getPrayerTimes } from './services/geminiService';
-import { Prayer, PrayerData, HijriDate } from './types';
-import LoadingSpinner from './components/LoadingSpinner';
-import Footer from './components/Footer';
-
-// --- Icon Components ---
-
-const ImsakIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
-);
-
-const FajrIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 17h18M5 12h14M12 2v6" />
-    </svg>
-);
-
-const SunriseIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="5" />
-        <line x1="12" y1="1" x2="12" y2="3" />
-        <line x1="12" y1="21" x2="12" y2="23" />
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-        <line x1="1" y1="12" x2="3" y2="12" />
-        <line x1="21" y1="12" x2="23" y2="12" />
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-    </svg>
-);
-
-const DhuhrIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="4" />
-        <path d="M12 2v2" />
-        <path d="M12 20v2" />
-        <path d="m4.9 4.9 1.4 1.4" />
-        <path d="m17.7 17.7 1.4 1.4" />
-        <path d="M2 12h2" />
-        <path d="M20 12h2" />
-        <path d="m4.9 19.1 1.4-1.4" />
-        <path d="m17.7 6.3 1.4-1.4" />
-    </svg>
-);
-
-const AsrIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 18a6 6 0 0 0 6-6h0a6 6 0 0 0-12 0h0a6 6 0 0 0 6 6Z"/>
-        <path d="M12 2v4"/>
-        <path d="m4.9 4.9 2.8 2.8"/>
-        <path d="M2 12h4"/>
-        <path d="M22 12h-4"/>
-        <path d="m16.3 7.7 2.8-2.8"/>
-    </svg>
-);
-
-
-const MaghribIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 17a5 5 0 0 0-5 5h10a5 5 0 0 0-5-5z"/>
-      <path d="M12 2v2"/>
-      <path d="m4.93 4.93 1.41 1.41"/>
-      <path d="M2 12h2"/>
-      <path d="M20 12h2"/>
-      <path d="m19.07 4.93-1.41 1.41"/>
-    </svg>
-);
-
-const IshaIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-    </svg>
-);
-
-const Clock: React.FC = () => {
-    const [time, setTime] = useState(new Date());
-
-    useEffect(() => {
-        const timerId = setInterval(() => setTime(new Date()), 1000);
-        return () => clearInterval(timerId);
-    }, []);
-
-    const options: Intl.DateTimeFormatOptions = {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-        timeZone: 'Asia/Jakarta'
-    };
-
-    return (
-        <p className="text-xl font-medium text-green-200/90 tracking-wider">
-            {`${time.toLocaleTimeString('en-GB', options)} WIB`}
-        </p>
-    );
-};
-
-const PrayerTimeList: React.FC<{ prayers: Prayer[] }> = ({ prayers }) => {
-    const [nextPrayerIndex, setNextPrayerIndex] = useState(-1);
-    const [expandedPrayer, setExpandedPrayer] = useState<string | null>(null);
-
-    const handlePrayerClick = (prayerName: string) => {
-        setExpandedPrayer(prev => prev === prayerName ? null : prayerName);
-    };
-
-    const handleKeyDown = (event: React.KeyboardEvent, prayerName: string) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            handlePrayerClick(prayerName);
-        }
-    };
-
-    useEffect(() => {
-        const updateNextPrayer = () => {
-            const now = new Date();
-            const wibTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }));
-            const currentTime = wibTime.getHours() * 60 + wibTime.getMinutes();
-
-            let upcomingPrayerIndex = prayers.findIndex(p => {
-                const [hours, minutes] = p.time.split(':').map(Number);
-                const prayerTime = hours * 60 + minutes;
-                return prayerTime > currentTime;
-            });
-            
-            if (upcomingPrayerIndex === -1) {
-                upcomingPrayerIndex = 0;
-            }
-            
-            setNextPrayerIndex(upcomingPrayerIndex);
-        };
-
-        updateNextPrayer();
-        const interval = setInterval(updateNextPrayer, 60000);
-
-        return () => clearInterval(interval);
-    }, [prayers]);
-
-    return (
-        <div className="space-y-4 w-full">
-            {prayers.map((prayer, index) => {
-                const isNext = index === nextPrayerIndex;
-                const isExpanded = expandedPrayer === prayer.name;
-                const Icon = prayer.icon;
-                return (
-                    <div 
-                        key={prayer.name}
-                        role="button"
-                        tabIndex={0}
-                        aria-expanded={isExpanded}
-                        onClick={() => handlePrayerClick(prayer.name)}
-                        onKeyDown={(e) => handleKeyDown(e, prayer.name)}
-                        className={`rounded-lg transition-all duration-500 cursor-pointer overflow-hidden outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-green-100 focus-visible:ring-green-600 ${isNext ? 'bg-green-200 scale-105 shadow-xl border-2 animate-pulse-border' : 'bg-green-100/50'}`}
-                    >
-                        <div className="flex items-center justify-between p-4">
-                            <div className="flex items-center gap-4">
-                                <Icon className={`h-6 w-6 ${isNext ? 'text-green-800' : 'text-green-700'}`} />
-                                <p className={`text-lg ${isNext ? 'text-green-900 font-bold' : 'text-green-800 font-semibold'}`}>{prayer.name}</p>
-                            </div>
-                            <p className={`text-xl font-bold font-sans ${isNext ? 'text-green-950' : 'text-green-900'}`}>{prayer.time}</p>
-                        </div>
-                        <div
-                            className={`transition-all duration-500 ease-in-out grid ${
-                                isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
-                            }`}
-                        >
-                            <div className="overflow-hidden">
-                                <div className={`mx-4 mb-4 pt-3 border-t ${isNext ? 'border-green-400' : 'border-green-200'}`}>
-                                    <p className={`text-sm text-center ${isNext ? 'text-green-800' : 'text-green-700'}`}>{prayer.description}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )
-            })}
-        </div>
-    );
-};
-
+import React, { useState, useEffect, useRef } from 'react';
+import { AladhanResponse, Timings, GregorianDate } from './types';
+import { PRAYER_TIMES_DATA, GREGORIAN_DAY_MAP, GREGORIAN_MONTH_MAP, ApiPrayerName, LogoIcon } from './constants';
+import PrayerTimeRow from './components/PrayerTimeRow';
+import { ClockLoader } from './components/Loader';
+import RealTimeClock from './components/RealTimeClock';
+import PrayerDetail from './components/PrayerDetail';
 
 const App: React.FC = () => {
-  const [prayerData, setPrayerData] = useState<PrayerData | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [cityInfo] = useState({ city: 'Semarang', country: 'Indonesia' });
-  const [currentDay, setCurrentDay] = useState<string>('');
+    const [prayerData, setPrayerData] = useState<Timings | null>(null);
+    const [gregorianDate, setGregorianDate] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const [currentTime, setCurrentTime] = useState(new Date());
+    const [nextPrayer, setNextPrayer] = useState<ApiPrayerName | null>(null);
+    const [expandedPrayer, setExpandedPrayer] = useState<ApiPrayerName | null>(null);
 
-  useEffect(() => {
-    const today = new Date();
-    const options: Intl.DateTimeFormatOptions = { weekday: 'long', timeZone: 'Asia/Jakarta' };
-    const dayName = new Intl.DateTimeFormat('id-ID', options).format(today);
-    setCurrentDay(dayName);
+    const contentRef = useRef<HTMLDivElement>(null);
+
+    const handlePrayerClick = (prayerKey: ApiPrayerName | null) => {
+        // Allow toggling for mobile accordion
+        setExpandedPrayer(current => (current === prayerKey ? null : prayerKey));
+    };
     
-    const fetchPrayerTimes = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const data = await getPrayerTimes(cityInfo.city, cityInfo.country);
-        setPrayerData(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
-      } finally {
-        setIsLoading(false);
-      }
+    // Close details if clicked outside the content area
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (contentRef.current && !contentRef.current.contains(event.target as Node)) {
+                setExpandedPrayer(null);
+            }
+        };
+
+        if (expandedPrayer) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [expandedPrayer]);
+
+
+    const formatGregorianDate = (gregorian: GregorianDate): string => {
+        // Create date object in UTC to avoid local timezone shifts
+        const date = new Date(Date.UTC(Number(gregorian.year), gregorian.month.number - 1, Number(gregorian.day)));
+        
+        const dayName = GREGORIAN_DAY_MAP[date.getUTCDay()];
+        const dayOfMonth = date.getUTCDate();
+        const monthName = GREGORIAN_MONTH_MAP[date.getUTCMonth()];
+        const year = date.getUTCFullYear();
+        return `${dayName}, ${dayOfMonth} ${monthName} ${year}`;
     };
 
-    fetchPrayerTimes();
-  }, [cityInfo]);
-  
-  const hijriMonthsID: { [key: string]: string } = {
-    "Muḥarram": "Muharram",
-    "Ṣafar": "Safar",
-    "Rabīʿ al-awwal": "Rabi'ul Awal",
-    "Rabīʿ al-thānī": "Rabi'ul Akhir",
-    "Jumādá al-ūlá": "Jumadil Awal",
-    "Jumādá al-thāniyah": "Jumadil Akhir",
-    "Rajab": "Rajab",
-    "Shaʿbān": "Sya'ban",
-    "Ramaḍān": "Ramadhan",
-    "Shawwāl": "Syawal",
-    "Dhū al-Qaʿdah": "Dzulqa'dah",
-    "Dhū al-Ḥijjah": "Dzulhijjah",
-  };
+    // Update current time every second to act as a ticker
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
 
-  const formatIndonesianHijriDate = (hijri: HijriDate): string => {
-    const monthInID = hijriMonthsID[hijri.month.en] || hijri.month.en;
-    return `${hijri.day} ${monthInID} ${hijri.year} H`;
-  };
+    // Determine the next prayer, now timezone-aware
+    useEffect(() => {
+        if (!prayerData) return;
 
-  const prayerList: Prayer[] = prayerData ? [
-      { name: 'Imsak', time: prayerData.timings.Imsak, icon: ImsakIcon, description: "The time to stop eating and drinking for fasting." },
-      { name: 'Subuh', time: prayerData.timings.Fajr, icon: FajrIcon, description: "The dawn prayer, marking the beginning of the day's spiritual journey." },
-      { name: 'Terbit', time: prayerData.timings.Sunrise, icon: SunriseIcon, description: "Sunrise. The time when the morning prayer (Subuh) period ends." },
-      { name: 'Dzuhur', time: prayerData.timings.Dhuhr, icon: DhuhrIcon, description: "The midday prayer, a moment of pause and remembrance in the midst of daily activities." },
-      { name: 'Ashar', time: prayerData.timings.Asr, icon: AsrIcon, description: "The afternoon prayer, a time for reflection as the day begins to wane." },
-      { name: 'Maghrib', time: prayerData.timings.Maghrib, icon: MaghribIcon, description: "The sunset prayer, performed just after the sun has set." },
-      { name: 'Isya', time: prayerData.timings.Isha, icon: IshaIcon, description: "The night prayer, the final prayer of the day, offering peace before rest." },
-  ] : [];
+        // Get the current time as "HH:mm" string in the target timezone
+        const now = new Date();
+        const jakartaTimeString = now.toLocaleTimeString('en-GB', {
+            timeZone: 'Asia/Jakarta',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
 
-  return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-green-900 via-[#013220] to-gray-900 text-gray-800 flex flex-col">
-      <header className="w-full max-w-lg mx-auto text-center text-green-100 pt-8 sm:pt-12 px-4">
-        <h1 className="text-4xl sm:text-5xl font-bold">Jadwal Sholat</h1>
-        <div className="mt-3">
-          <p className="text-lg text-green-200/90">
-            Semarang, Indonesia
-            {prayerData && ` — ${currentDay}, ${prayerData.date.readable}`}
-          </p>
-          {prayerData && (
-            <p className="text-base text-green-300/80 tracking-wide mt-1">
-              {formatIndonesianHijriDate(prayerData.date.hijri)}
-            </p>
-          )}
+        const prayerOrder = PRAYER_TIMES_DATA.map(p => p.key);
+        let nextPrayerFound: ApiPrayerName | null = null;
+
+        // Find the next prayer for today by comparing time strings
+        for (const prayerName of prayerOrder) {
+            const prayerTimeStr = prayerData[prayerName];
+            if (!prayerTimeStr) continue;
+            
+            if (prayerTimeStr > jakartaTimeString) {
+                nextPrayerFound = prayerName;
+                break;
+            }
+        }
+        
+        // If all prayers for today have passed, the next prayer is the first one of the day
+        if (!nextPrayerFound) {
+            nextPrayerFound = prayerOrder[0];
+        }
+        
+        setNextPrayer(nextPrayerFound);
+
+    }, [currentTime, prayerData]);
+
+
+    useEffect(() => {
+        const fetchPrayerTimes = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                // Fetch using Kemenag method (Fajr: 20°, Isha: 18°) for Indonesian accuracy
+                const response = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=Semarang&country=Indonesia&method=99&methodSettings=20,null,18`);
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok: ${response.statusText}`);
+                }
+                const data: AladhanResponse = await response.json();
+
+                if (data.code === 200) {
+                    setPrayerData(data.data.timings);
+                    
+                    const gregorian = data.data.date.gregorian;
+                    setGregorianDate(formatGregorianDate(gregorian));
+
+                } else {
+                    throw new Error(data.status);
+                }
+            } catch (e) {
+                if (e instanceof Error) {
+                    setError(`Failed to fetch data: ${e.message}`);
+                } else {
+                    setError('An unknown error occurred.');
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPrayerTimes();
+    }, []);
+
+    const renderContent = () => {
+        if (loading) {
+            return <div className="flex flex-col items-center justify-center h-64"><ClockLoader /><p className="mt-4 text-lg text-gray-300">Memuat data...</p></div>;
+        }
+
+        if (error) {
+            return <div className="text-center p-8 bg-red-900/50 rounded-lg"><p className="text-red-300">{error}</p></div>;
+        }
+
+        if (prayerData) {
+            const expandedPrayerDetails = expandedPrayer ? PRAYER_TIMES_DATA.find(p => p.key === expandedPrayer) : null;
+            
+            return (
+                 <div ref={contentRef} className="relative bg-gray-900/50 p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-700 backdrop-blur-sm min-h-[400px] md:flex md:items-center md:justify-center">
+                    {/* --- Desktop View --- */}
+                    <div className="hidden md:block">
+                        {expandedPrayerDetails ? (
+                            // Focus View: Show one prayer and its details
+                            <div className="flex flex-row justify-center items-start gap-6">
+                                <PrayerTimeRow
+                                    key={expandedPrayerDetails.key}
+                                    icon={expandedPrayerDetails.icon}
+                                    name={expandedPrayerDetails.displayName}
+                                    time={prayerData[expandedPrayerDetails.key as keyof Timings]}
+                                    isNext={nextPrayer === expandedPrayerDetails.key}
+                                    isExpanded={true} // Always visually "expanded" in focus view
+                                    onClick={() => handlePrayerClick(expandedPrayerDetails.key)}
+                                    description={expandedPrayerDetails.description}
+                                    details={expandedPrayerDetails.details}
+                                />
+                                <PrayerDetail
+                                    key={`${expandedPrayerDetails.key}-detail`}
+                                    name={expandedPrayerDetails.displayName}
+                                    icon={expandedPrayerDetails.icon}
+                                    description={expandedPrayerDetails.description}
+                                    details={expandedPrayerDetails.details}
+                                />
+                                <button 
+                                    onClick={() => setExpandedPrayer(null)} 
+                                    className="absolute top-3 right-3 w-8 h-8 bg-gray-700 rounded-full text-gray-300 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-gray-900 z-10"
+                                    aria-label="Close details"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                </button>
+                            </div>
+                        ) : (
+                            // Grid View: Show all prayers
+                            <div className="flex flex-row flex-wrap justify-center gap-4">
+                                {PRAYER_TIMES_DATA.map(prayer => (
+                                    <PrayerTimeRow
+                                        key={prayer.key}
+                                        icon={prayer.icon}
+                                        name={prayer.displayName}
+                                        time={prayerData[prayer.key as keyof Timings]}
+                                        isNext={nextPrayer === prayer.key}
+                                        isExpanded={false} // No item is expanded in the grid view
+                                        onClick={() => handlePrayerClick(prayer.key)}
+                                        description={prayer.description}
+                                        details={prayer.details}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* --- Mobile View (Accordion) --- */}
+                    <div className="flex flex-col gap-4 md:hidden">
+                         {PRAYER_TIMES_DATA.map(prayer => (
+                            <PrayerTimeRow
+                                key={prayer.key}
+                                icon={prayer.icon}
+                                name={prayer.displayName}
+                                time={prayerData[prayer.key as keyof Timings]}
+                                isNext={nextPrayer === prayer.key}
+                                isExpanded={expandedPrayer === prayer.key}
+                                onClick={() => handlePrayerClick(prayer.key)}
+                                description={prayer.description}
+                                details={prayer.details}
+                            />
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        return null;
+    };
+
+    return (
+        <div className="bg-gradient-to-b from-gray-900 to-black min-h-screen text-white font-sans p-4 sm:p-6 md:p-8">
+            <main className="max-w-4xl mx-auto flex flex-col min-h-[95vh]">
+                <header className="text-center mb-8 mt-4">
+                    <h1 className="text-4xl sm:text-5xl font-bold text-green-300 font-title uppercase">Jadwal Sholat</h1>
+                    <p className="text-md sm:text-lg text-gray-300 mt-2">Semarang, Indonesia — {gregorianDate}</p>
+                    <RealTimeClock />
+                </header>
+
+                <section className="flex-grow">
+                    {renderContent()}
+                </section>
+
+                <footer className="mt-8 text-center text-gray-400">
+                    <div className="w-full overflow-hidden bg-black/30 rounded-full">
+                        <div className="whitespace-nowrap animate-marquee">
+                           <p className="py-2 text-lg">"Sholat berjamaah lebih utama daripada sholat sendirian sebanyak 27 derajat. HR. Bukhari no. 645, Muslim no. 650"</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center justify-center gap-2 mt-4 opacity-60">
+                         <LogoIcon />
+                         <p className="text-xs">Prayer Times Project</p>
+                    </div>
+                </footer>
+            </main>
         </div>
-        <div className="mt-2">
-            <Clock />
-        </div>
-      </header>
-      
-      <main className="w-full max-w-lg mx-auto flex flex-col items-center flex-grow p-4 sm:p-6 w-full">
-          <div className="bg-green-50/90 backdrop-blur-sm rounded-2xl shadow-2xl p-6 sm:p-8 w-full mt-4">
-            {isLoading && <div className="flex justify-center items-center h-48"><LoadingSpinner /></div>}
-            {error && <p className="text-red-600 bg-red-100 border border-red-400 rounded-lg p-4 text-center">{error}</p>}
-            {prayerData && (
-                <PrayerTimeList prayers={prayerList} />
-            )}
-          </div>
-      </main>
-
-      <Footer />
-    </div>
-  );
+    );
 };
 
 export default App;

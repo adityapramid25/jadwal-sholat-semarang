@@ -1,5 +1,5 @@
 {
-  "name": "Islamic Prayer Times",
-  "description": "An elegant and modern website displaying real-time Islamic prayer schedules for your city, fetched from a Prayer Times API. Features a clean, responsive design with a dark green and white color theme.",
+  "name": "website jadwal sholat semarang FIX",
+  "description": "A web application that displays daily prayer times for Semarang, Central Java, Indonesia, with a sleek, dark-themed interface optimized for both mobile and desktop views.",
   "requestFramePermissions": []
 }

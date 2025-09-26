@@ -2,30 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Islamic Prayer Times</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Jadwal Sholat Semarang</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Gentium+Book+Plus:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      body {
-        font-family: 'Gentium Book Plus', serif;
+      .font-title {
+        font-family: 'Rajdhani', sans-serif;
+        letter-spacing: 0.1em;
       }
-      h1, h2, h3, h4, h5, h6 {
-        font-family: 'Amiri', serif;
+      /* For custom marquee animation */
+      @keyframes marquee {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
       }
-      @keyframes pulse-border {
-        0%, 100% {
-          border-color: #16a34a; /* Equivalent to green-600 */
-        }
-        50% {
-          border-color: #4ade80; /* Equivalent to green-400 */
-        }
+      .animate-marquee {
+        animation: marquee 25s linear infinite;
       }
-      .animate-pulse-border {
-        animation: pulse-border 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      /* For slide-in animation on detail view */
+      @keyframes slide-fade-in-right {
+        0% { opacity: 0; transform: translateX(20px); }
+        100% { opacity: 1; transform: translateX(0); }
+      }
+      .animate-slide-fade-in-right {
+        animation: slide-fade-in-right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
       }
     </style>
   <script type="importmap">
@@ -33,14 +35,13 @@
   "imports": {
     "react/": "https://aistudiocdn.com/react@^19.1.1/",
     "react": "https://aistudiocdn.com/react@^19.1.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.20.0"
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/"
   }
 }
 </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-  <body>
+  <body class="bg-gray-900">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
