@@ -237,9 +237,9 @@ const App: React.FC = () => {
                            <p className="py-2 text-lg">"Sholat berjamaah lebih utama daripada sholat sendirian sebanyak 27 derajat. HR. Bukhari no. 645, Muslim no. 650"</p>
                         </div>
                     </div>
-                    <div className="flex items-center justify-center gap-2 mt-4 opacity-60">
+                    <div className="flex items-center justify-center gap-3 mt-4 opacity-70">
                          <LogoIcon />
-                         <p className="text-xs">SMKN 9 SEMARANG</p>
+                         <p className="text-sm">SMKN 9 SEMARANG</p>
                     </div>
                 </footer>
             </main>
